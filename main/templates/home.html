@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Blog Home</title>
+</head>
+<body class="bg-gray-100">
+    <!-- Navbar -->
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <nav class="container mx-auto flex items-center justify-between py-4">
+            <a href="/" class="text-2xl font-bold text-blue-600">My Blog</a>
+            <ul class="hidden md:flex space-x-6">
+                <li><a href="/" class="text-gray-600 hover:text-blue-600">Home</a></li>
+                <li><a href="#popular-posts" class="text-gray-600 hover:text-blue-600">Popular Posts</a></li>
+                <li><a href="#categories" class="text-gray-600 hover:text-blue-600">Categories</a></li>
+                <li><a href="#about" class="text-gray-600 hover:text-blue-600">About</a></li>
+            </ul>
+            <button id="menu-toggle" class="block md:hidden text-gray-600 focus:outline-none">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
+                </svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-100 shadow-md">
+            <ul class="space-y-4 p-4">
+                <li><a href="/" class="block text-gray-600 hover:text-blue-600">Home</a></li>
+                <li><a href="#popular-posts" class="block text-gray-600 hover:text-blue-600">Popular Posts</a></li>
+                <li><a href="#categories" class="block text-gray-600 hover:text-blue-600">Categories</a></li>
+                <li><a href="#about" class="block text-gray-600 hover:text-blue-600">About</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto mt-6">
+        <!-- Search Bar -->
+        <form method="get" action="" class="mb-6">
+            <div class="flex items-center">
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ query|default_if_none:'' }}" 
+                    placeholder="Search posts..." 
+                    class="w-full p-3 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button 
+                    type="submit" 
+                    class="bg-blue-600 text-white px-4 py-3 rounded-none hover:bg-blue-700">
+                    Search
+                </button>
+            </div>
+        </form>
+
+        <!-- Posts Section -->
+        <div class="space-y-8">
+            {% if posts %}
+                {% for post in posts %}
+                <div class="bg-white shadow-md border border-gray-200 p-6 rounded-lg">
+                    <h2 class="text-3xl font-bold text-blue-600 mb-3">
+                        <a href="{% url 'post_detail' post.slug %}" class="hover:underline">{{ post.title }}</a>
+                    </h2>
+                    <p class="text-gray-500 text-sm">Category: <span class="text-blue-600">{{ post.category.name }}</span></p>
+                    <p class="text-gray-500 text-sm">Views: {{ post.views }} | Posted on: {{ post.created_at|date:"F j, Y" }}</p>
+                    <p class="text-gray-700 mt-2">{{ post.content|truncatewords:50 }}</p>
+                    <div class="mt-4 flex items-center">
+                        <span class="text-sm text-gray-600">Author: {{ post.author.username }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-gray-500">No posts found for your search.</p>
+            {% endif %}
+        </div>
+
+        <!-- Popular Posts Section -->
+        <div id="popular-posts" class="mt-10">
+            <h2 class="text-2xl font-bold mb-4">Popular Posts</h2>
+            <div class="bg-white shadow-md p-6 border border-gray-200 rounded-lg">
+                <ul>
+                    {% for post in popular_posts %}
+                    <li class="mb-4">
+                        <a href="{% url 'post_detail' post.slug %}" class="text-blue-600 hover:underline font-semibold">
+                            {{ post.title }}
+                        </a>
+                        <p class="text-sm text-gray-500">Views: {{ post.views }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Categories Section -->
+        <div id="categories" class="mt-10">
+            <h2 class="text-2xl font-bold mb-4">Categories</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {% for category in categories %}
+                <a href="{% url 'category_posts' category.slug %}" class="block bg-blue-100 p-4 text-center text-blue-600 font-semibold rounded-md hover:bg-blue-200">
+                    {{ category.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer id="about" class="bg-blue-600 text-white py-6 mt-10">
+        <div class="container mx-auto text-center">
+            <p class="text-sm">&copy; 2025 My Blog. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
