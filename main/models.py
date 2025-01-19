@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
+from django_prose_editor.fields import ProseEditorField
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -17,7 +18,7 @@ class Category(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
-    content = models.TextField()
+    content = ProseEditorField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='posts')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     views = models.PositiveIntegerField(default=0)
